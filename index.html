@@ -84,12 +84,6 @@
           <span id="header-clock">--:--:--</span>
         </div>
 
-        <!-- Button to open Mobile QR Modal -->
-        <button onclick="openMobileQRModal()" class="neu-btn px-3 py-2 text-xs font-bold text-slate-700 hover:text-blue-600 transition rounded-xl flex items-center gap-1.5" title="เปิดดูในโทรศัพท์มือถือ">
-          <i data-lucide="smartphone" class="w-4 h-4 text-blue-600"></i>
-          <span>ดูในมือถือ</span>
-        </button>
-
         <button onclick="if(confirm('ต้องการรีเซ็ตข้อมูลจำลองทั้งหมดกลับสู่ค่าเริ่มต้นหรือไม่?')) { AppState.resetAllData(); location.reload(); }" 
                 class="neu-btn p-2 text-slate-500 hover:text-red-600 transition rounded-xl" title="รีเซ็ตข้อมูล">
           <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
@@ -249,48 +243,27 @@
     <!-- ================================================================= -->
     <main id="back-office-view" class="hidden flex flex-col gap-4">
       
-      <!-- Back Office Sub-Navigation Bar -->
-      <nav class="neu-box p-2 flex items-center gap-2 overflow-x-auto">
-        <button id="nav-dashboard-tab" onclick="switchBackTab('dashboard-tab')" class="neu-btn back-nav-btn px-4 py-2.5 text-xs font-semibold rounded-xl whitespace-nowrap tab-active">
-          <i data-lucide="bar-chart-3" class="w-4 h-4 text-purple-600"></i>
-          <span>1. แดชบอร์ดสรุปผล (Dashboard)</span>
-        </button>
+      <!-- Back Office Hamburger Control Bar (ไม่ต้องเลื่อนแถบยาว) -->
+      <div class="neu-box px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button id="btn-hamburger-menu" onclick="openHamburgerMenu()" class="neu-btn neu-btn-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-md hover:scale-[1.02] transition">
+            <i data-lucide="menu" class="w-4 h-4 stroke-[2.5]"></i>
+            <span>เมนูระบบหลังร้าน (Menu)</span>
+          </button>
 
-        <button id="nav-inventory-tab" onclick="switchBackTab('inventory-tab')" class="neu-btn back-nav-btn px-4 py-2.5 text-xs font-semibold rounded-xl whitespace-nowrap">
-          <i data-lucide="boxes" class="w-4 h-4 text-blue-600"></i>
-          <span>2. สต็อกสินค้าคงคลัง (Inventory)</span>
-        </button>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400 font-medium">กำลังแสดง:</span>
+            <span id="current-back-tab-label" class="liquid-pill px-3.5 py-1.5 text-xs font-bold text-slate-800 bg-white/80 border-slate-300">
+              📊 1. แดชบอร์ดสรุปผล (Dashboard)
+            </span>
+          </div>
+        </div>
 
-        <button id="nav-receiving-tab" onclick="switchBackTab('receiving-tab')" class="neu-btn back-nav-btn px-4 py-2.5 text-xs font-semibold rounded-xl whitespace-nowrap">
-          <i data-lucide="truck" class="w-4 h-4 text-indigo-600"></i>
-          <span>3. รับสินค้าเข้าคลัง (Receiving)</span>
-        </button>
-
-        <button id="nav-transfer-tab" onclick="switchBackTab('transfer-tab')" class="neu-btn back-nav-btn px-4 py-2.5 text-xs font-semibold rounded-xl whitespace-nowrap">
-          <i data-lucide="arrow-left-right" class="w-4 h-4 text-cyan-600"></i>
-          <span>4. โอนย้ายเติมของ (Transfer)</span>
-        </button>
-
-        <button id="nav-counting-tab" onclick="switchBackTab('counting-tab')" class="neu-btn back-nav-btn px-4 py-2.5 text-xs font-semibold rounded-xl whitespace-nowrap">
-          <i data-lucide="clipboard-check" class="w-4 h-4 text-teal-600"></i>
-          <span>5. ตรวจนับสต็อก & อนุมัติ (Count)</span>
-        </button>
-
-        <button id="nav-expiry-tab" onclick="switchBackTab('expiry-tab')" class="neu-btn back-nav-btn px-4 py-2.5 text-xs font-semibold rounded-xl whitespace-nowrap">
-          <i data-lucide="calendar-off" class="w-4 h-4 text-amber-600"></i>
-          <span>6. วันหมดอายุ FEFO & GS1</span>
-        </button>
-
-        <button id="nav-movements-tab" onclick="switchBackTab('movements-tab')" class="neu-btn back-nav-btn px-4 py-2.5 text-xs font-semibold rounded-xl whitespace-nowrap">
-          <i data-lucide="history" class="w-4 h-4 text-slate-600"></i>
-          <span>7. ประวัติเคลื่อนไหว (Movements)</span>
-        </button>
-
-        <button id="nav-audit-tab" onclick="switchBackTab('audit-tab')" class="neu-btn back-nav-btn px-4 py-2.5 text-xs font-semibold rounded-xl whitespace-nowrap">
-          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
-          <span>8. บันทึกความปลอดภัย (Audit)</span>
-        </button>
-      </nav>
+        <div class="text-xs text-slate-500 font-medium hidden sm:flex items-center gap-1.5">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-slate-400"></i>
+          <span>คลิกปุ่ม <strong>เมนูระบบหลังร้าน</strong> เพื่อสลับหน้าได้อย่างรวดเร็ว</span>
+        </div>
+      </div>
 
       <!-- BACK OFFICE TAB 1: DASHBOARD -->
       <section id="dashboard-tab" class="back-tab-content flex flex-col gap-4">
@@ -910,51 +883,123 @@
     </div>
   </div>
 
-  <!-- MODAL: MOBILE PREVIEW QR CODE -->
-  <div id="mobile-qr-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden">
-    <div class="liquid-glass-modal w-full max-w-md p-6 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
+  <!-- MODAL: HAMBURGER NAVIGATION DRAWER (ไม่ต้องเลื่อนแถบยาว) -->
+  <div id="hamburger-menu-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden">
+    <div class="liquid-glass-modal w-full max-w-2xl p-6 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
       <div class="flex items-center justify-between pb-3 border-b border-white/60">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 neu-inset-sm flex items-center justify-center rounded-xl text-blue-600">
-            <i data-lucide="smartphone" class="w-4 h-4"></i>
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-xl text-slate-800">
+            <i data-lucide="menu" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-slate-800">เปิดใช้งานบนโทรศัพท์มือถือ</h3>
-            <p class="text-[11px] text-slate-500">สแกน QR เพื่อเปิดเว็บแอปในเบราว์เซอร์มือถือ</p>
+            <h3 class="text-base font-bold text-slate-800">เมนูระบบหลังร้าน (Back Office System)</h3>
+            <p class="text-[11px] text-slate-500">เลือกเมนูที่ต้องการทำงานได้ทันที ไม่ต้องเลื่อนแถบยาว</p>
           </div>
         </div>
-        <button onclick="closeMobileQRModal()" class="neu-btn w-8 h-8 rounded-full text-slate-600 hover:text-slate-900">✕</button>
+        <button onclick="closeHamburgerMenu()" class="neu-btn w-8 h-8 rounded-full text-slate-600 hover:text-slate-900">✕</button>
       </div>
 
-      <div class="flex flex-col items-center gap-3 py-2">
-        <!-- QR Canvas Container -->
-        <div class="p-3 bg-white rounded-2xl shadow-md border-2 border-white/90">
-          <div id="mobile-qr-container" class="flex items-center justify-center min-h-[190px] min-w-[190px]"></div>
-        </div>
-
-        <div class="w-full neu-inset p-3 rounded-xl flex flex-col gap-1.5 text-xs">
-          <span class="text-slate-500 text-[11px]">URL สำหรับเปิดในโทรศัพท์:</span>
-          <div class="flex items-center gap-2">
-            <input type="text" id="mobile-url-input" class="bg-transparent font-mono text-slate-800 font-bold outline-none flex-1" value="http://192.168.1.15:8080/index.html">
-            <button onclick="copyMobileUrl()" class="neu-btn px-2.5 py-1 text-[11px] text-slate-700">คัดลอก</button>
+      <!-- 8 Modules Grid Selection -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-1">
+        
+        <button onclick="selectHamburgerTab('dashboard-tab', '📊 1. แดชบอร์ดสรุปผล (Dashboard)')" 
+                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-purple-300">
+          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-purple-600 shrink-0 group-hover:bg-purple-100 transition">
+            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
           </div>
-        </div>
-
-        <div class="liquid-pill p-3 bg-blue-50/70 text-blue-900 text-xs flex flex-col gap-1 w-full">
-          <div class="flex items-center gap-1.5 font-bold">
-            <i data-lucide="wifi" class="w-4 h-4 text-blue-600"></i>
-            <span>ข้อกำหนดการเชื่อมต่อ:</span>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 group-hover:text-purple-700">1. แดชบอร์ดสรุปผล (Dashboard)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">สรุปยอดขายประจำวัน, จำนวนบิล, สินค้าใกล้หมดสต็อก</p>
           </div>
-          <p class="text-[11px] leading-relaxed text-blue-800">
-            1. ตรวจสอบให้โทรศัพท์มือถือเชื่อมต่อ <strong>Wi-Fi วงเดียวกัน</strong> กับคอมพิวเตอร์<br>
-            2. เปิดแอปกล้อง (Camera) หรือ LINE ในมือถือ แล้วสแกน QR Code นี้ได้ทันที
-          </p>
-        </div>
+        </button>
+
+        <button onclick="selectHamburgerTab('inventory-tab', '📦 2. สต็อกสินค้าคงคลัง (Inventory)')" 
+                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-blue-300">
+          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-blue-600 shrink-0 group-hover:bg-blue-100 transition">
+            <i data-lucide="boxes" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 group-hover:text-blue-700">2. สต็อกสินค้าคงคลัง (Inventory)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">ตรวจสอบสต็อกแยกหน้าร้าน, ห้องเก็บของ, ชำรุด, หมดอายุ</p>
+          </div>
+        </button>
+
+        <button onclick="selectHamburgerTab('receiving-tab', '🚚 3. รับสินค้าเข้าคลัง (Receiving)')" 
+                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-indigo-300">
+          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-indigo-600 shrink-0 group-hover:bg-indigo-100 transition">
+            <i data-lucide="truck" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 group-hover:text-indigo-700">3. รับสินค้าเข้าคลัง (Receiving)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">บันทึกรับสินค้าจากการจัดส่ง DC ระบุล็อตและวันหมดอายุ</p>
+          </div>
+        </button>
+
+        <button onclick="selectHamburgerTab('transfer-tab', '🔄 4. โอนย้ายเติมของ (Transfer)')" 
+                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-cyan-300">
+          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-cyan-600 shrink-0 group-hover:bg-cyan-100 transition">
+            <i data-lucide="arrow-left-right" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 group-hover:text-cyan-700">4. โอนย้ายเติมของ (Transfer)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">เติมสินค้าจากห้องเก็บของสำรองมาจัดเรียงบนชั้นวางหน้าร้าน</p>
+          </div>
+        </button>
+
+        <button onclick="selectHamburgerTab('counting-tab', '📋 5. ตรวจนับสต็อก & อนุมัติ (Count)')" 
+                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-teal-300">
+          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-teal-600 shrink-0 group-hover:bg-teal-100 transition">
+            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 group-hover:text-teal-700">5. ตรวจนับสต็อก & อนุมัติ (Count)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">นับสินค้าจริงเทียบยอดในระบบ พร้อมระบบอนุมัติผู้จัดการ</p>
+          </div>
+        </button>
+
+        <button onclick="selectHamburgerTab('expiry-tab', '⏳ 6. วันหมดอายุ FEFO & GS1')" 
+                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-amber-300">
+          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-amber-600 shrink-0 group-hover:bg-amber-100 transition">
+            <i data-lucide="calendar-off" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 group-hover:text-amber-700">6. วันหมดอายุ FEFO & GS1</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">จัดการล็อตสินค้าใกล้หมดอายุและตัดจำหน่ายสินค้าหมดอายุ</p>
+          </div>
+        </button>
+
+        <button onclick="selectHamburgerTab('movements-tab', '📜 7. ประวัติเคลื่อนไหว (Movements)')" 
+                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-slate-400">
+          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-slate-600 shrink-0 group-hover:bg-slate-200 transition">
+            <i data-lucide="history" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 group-hover:text-slate-900">7. ประวัติเคลื่อนไหว (Movements)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">บันทึกความเคลื่อนไหวทุกรายการ: ขาย, รับ, ย้าย, ปรับยอด</p>
+          </div>
+        </button>
+
+        <button onclick="selectHamburgerTab('audit-tab', '🛡️ 8. บันทึกความปลอดภัย (Audit)')" 
+                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-rose-300">
+          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-rose-600 shrink-0 group-hover:bg-rose-100 transition">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800 group-hover:text-rose-700">8. บันทึกความปลอดภัย (Audit)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">ตรวจสอบบันทึกความโปร่งใสและกิจกรรมป้องกันทุจริต</p>
+          </div>
+        </button>
+
       </div>
 
-      <button onclick="closeMobileQRModal()" class="neu-btn w-full py-2.5 text-xs font-semibold rounded-xl">
-        ปิดหน้าต่าง
-      </button>
+      <div class="pt-2 border-t border-white/60 flex justify-end">
+        <button onclick="closeHamburgerMenu()" class="neu-btn px-4 py-2 text-xs font-semibold rounded-xl">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+
     </div>
   </div>
 

@@ -465,14 +465,28 @@ function switchSystemMode(mode) {
 }
 
 // Switch Sub-tabs inside Back Office
-function switchBackTab(tabId) {
+const TAB_LABELS = {
+  'dashboard-tab': '📊 1. แดชบอร์ดสรุปผล (Dashboard)',
+  'inventory-tab': '📦 2. สต็อกสินค้าคงคลัง (Inventory)',
+  'receiving-tab': '🚚 3. รับสินค้าเข้าคลัง (Receiving)',
+  'transfer-tab': '🔄 4. โอนย้ายเติมของ (Transfer)',
+  'counting-tab': '📋 5. ตรวจนับสต็อก & อนุมัติ (Count)',
+  'expiry-tab': '⏳ 6. วันหมดอายุ FEFO & GS1',
+  'movements-tab': '📜 7. ประวัติเคลื่อนไหว (Movements)',
+  'audit-tab': '🛡️ 8. บันทึกความปลอดภัย (Audit)'
+};
+
+function switchBackTab(tabId, customLabel) {
   document.querySelectorAll('.back-tab-content').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.back-nav-btn').forEach(btn => btn.classList.remove('tab-active'));
 
   const target = document.getElementById(tabId);
-  const targetBtn = document.getElementById('nav-' + tabId);
   if (target) target.classList.remove('hidden');
-  if (targetBtn) targetBtn.classList.add('tab-active');
+
+  // Update Active Header Label
+  const labelEl = document.getElementById('current-back-tab-label');
+  if (labelEl) {
+    labelEl.innerText = customLabel || TAB_LABELS[tabId] || 'เมนูระบบหลังร้าน';
+  }
 
   if (tabId === 'dashboard-tab') renderDashboard();
   if (tabId === 'inventory-tab') renderInventory();
@@ -482,6 +496,23 @@ function switchBackTab(tabId) {
   if (tabId === 'expiry-tab') renderExpiry();
   if (tabId === 'movements-tab') renderMovements();
   if (tabId === 'audit-tab') renderAudit();
+}
+
+// Hamburger Menu Navigation Functions
+function openHamburgerMenu() {
+  const modal = document.getElementById('hamburger-menu-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeHamburgerMenu() {
+  const modal = document.getElementById('hamburger-menu-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function selectHamburgerTab(tabId, label) {
+  switchBackTab(tabId, label);
+  closeHamburgerMenu();
+  showToast(`เปิดหน้า: ${label}`, 'info', 1800);
 }
 
 // Toggle Current User Role (Store Manager vs Cashier)
@@ -1459,49 +1490,7 @@ function showToast(message, type = 'info', duration = 3000) {
 }
 
 // ==========================================
-// 8. MOBILE PREVIEW QR CODE MODAL
-// ==========================================
-function openMobileQRModal() {
-  const modal = document.getElementById('mobile-qr-modal');
-  const qrBox = document.getElementById('mobile-qr-container');
-  const urlInput = document.getElementById('mobile-url-input');
-
-  // Determine current hostname or default local IP
-  let host = window.location.hostname;
-  if (!host || host === 'localhost' || host === '127.0.0.1') {
-    host = '192.168.1.15';
-  }
-  const port = window.location.port || '8080';
-  const mobileUrl = `http://${host}:${port}/index.html`;
-
-  urlInput.value = mobileUrl;
-  qrBox.innerHTML = '';
-
-  new QRCode(qrBox, {
-    text: mobileUrl,
-    width: 190,
-    height: 190,
-    colorDark: "#1a202c",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.M
-  });
-
-  modal.classList.remove('hidden');
-}
-
-function closeMobileQRModal() {
-  document.getElementById('mobile-qr-modal').classList.add('hidden');
-}
-
-function copyMobileUrl() {
-  const input = document.getElementById('mobile-url-input');
-  input.select();
-  navigator.clipboard.writeText(input.value);
-  showToast('คัดลอกลิงก์สำเร็จแล้ว!', 'success');
-}
-
-// ==========================================
-// 9. INITIALIZATION
+// 8. INITIALIZATION
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
