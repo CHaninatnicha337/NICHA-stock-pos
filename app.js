@@ -87,6 +87,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456019",
     name: "น้ำดื่ม ซีพี-เซเว่น 600 ml",
     category: "เครื่องดื่ม",
+    image: "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=350&auto=format&fit=crop&q=70",
     cost: 4.5,
     price: 7.0,
     unit: "ขวด",
@@ -104,7 +105,8 @@ const DEFAULT_PRODUCTS = [
     sku: "M002",
     barcode: "8850123456026",
     name: "นมสด เมจิ รสจืด 200 ml",
-    category: "เครื่องดื่ม / นม",
+    category: "เครื่องดื่ม",
+    image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=350&auto=format&fit=crop&q=70",
     cost: 9.0,
     price: 13.5,
     unit: "กล่อง",
@@ -123,6 +125,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456033",
     name: "แซนด์วิชอบร้อน แฮมชีส",
     category: "อาหารพร้อมรับประทาน",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=350&auto=format&fit=crop&q=70",
     cost: 18.0,
     price: 29.0,
     unit: "ชิ้น",
@@ -141,6 +144,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456040",
     name: "ข้าวกะเพราหมูสับ ไข่ดาว EZYGO",
     category: "อาหารพร้อมรับประทาน",
+    image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=350&auto=format&fit=crop&q=70",
     cost: 30.0,
     price: 45.0,
     unit: "กล่อง",
@@ -159,6 +163,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456057",
     name: "ข้าวผัดไส้กรอก (ล็อตทดสอบหมดอายุ GS1)",
     category: "อาหารพร้อมรับประทาน",
+    image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=350&auto=format&fit=crop&q=70",
     cost: 26.0,
     price: 39.0,
     unit: "กล่อง",
@@ -178,6 +183,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456064",
     name: "ขนมปังแซนด์วิช ฟาร์มเฮ้าส์",
     category: "เบเกอรี่",
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=350&auto=format&fit=crop&q=70",
     cost: 16.0,
     price: 24.0,
     unit: "แถว",
@@ -196,6 +202,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456071",
     name: "มันฝรั่งทอดกรอบ เลย์ คลาสสิค 42g",
     category: "ขนมขบเคี้ยว",
+    image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=350&auto=format&fit=crop&q=70",
     cost: 14.5,
     price: 20.0,
     unit: "ซอง",
@@ -214,6 +221,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456088",
     name: "ชาเขียว อิชิตัน รสน้ำผึ้งมะนาว 420 ml",
     category: "เครื่องดื่ม",
+    image: "https://images.unsplash.com/photo-1556881286-fc6915169721?w=350&auto=format&fit=crop&q=70",
     cost: 13.0,
     price: 20.0,
     unit: "ขวด",
@@ -232,6 +240,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456095",
     name: "ยาสีฟัน คอลเกต โททอล 150g",
     category: "ของใช้ส่วนตัว",
+    image: "https://images.unsplash.com/photo-1559591937-e1032b4b4556?w=350&auto=format&fit=crop&q=70",
     cost: 58.0,
     price: 79.0,
     unit: "หลอด",
@@ -250,6 +259,7 @@ const DEFAULT_PRODUCTS = [
     barcode: "8850123456101",
     name: "มาม่า บะหมี่กึ่งสำเร็จรูป ต้มยำกุ้ง",
     category: "อาหารแห้ง",
+    image: "https://images.unsplash.com/photo-1612927601601-6638404737ce?w=350&auto=format&fit=crop&q=70",
     cost: 5.5,
     price: 7.0,
     unit: "ซอง",
@@ -331,6 +341,14 @@ class StockSystemState {
 
   loadState() {
     this.products = JSON.parse(localStorage.getItem('seven_products')) || DEFAULT_PRODUCTS;
+    // Ensure all products have images even if loaded from older localStorage
+    this.products.forEach(p => {
+      if (!p.image) {
+        const def = DEFAULT_PRODUCTS.find(d => d.id === p.id);
+        p.image = def ? def.image : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=350&auto=format&fit=crop&q=70";
+      }
+    });
+
     this.batches = JSON.parse(localStorage.getItem('seven_batches')) || DEFAULT_BATCHES;
     this.movements = JSON.parse(localStorage.getItem('seven_movements')) || [
       {
@@ -357,6 +375,16 @@ class StockSystemState {
       }
     ];
     this.salesHistory = JSON.parse(localStorage.getItem('seven_sales')) || [];
+    this.holdBills = JSON.parse(localStorage.getItem('seven_hold_bills')) || [];
+    this.cashierShift = JSON.parse(localStorage.getItem('seven_cashier_shift')) || {
+      startTime: new Date().toLocaleTimeString('th-TH'),
+      startDate: new Date().toLocaleDateString('th-TH'),
+      cashier: "สมศักดิ์ สุขใจ",
+      billsCount: 0,
+      cashTotal: 0,
+      qrTotal: 0,
+      cardTotal: 0
+    };
     this.auditLogs = JSON.parse(localStorage.getItem('seven_audit')) || [
       {
         timestamp: new Date(Date.now() - 3600000 * 6).toLocaleString('th-TH'),
@@ -379,6 +407,71 @@ class StockSystemState {
     localStorage.setItem('seven_movements', JSON.stringify(this.movements));
     localStorage.setItem('seven_sales', JSON.stringify(this.salesHistory));
     localStorage.setItem('seven_audit', JSON.stringify(this.auditLogs));
+    localStorage.setItem('seven_hold_bills', JSON.stringify(this.holdBills));
+    localStorage.setItem('seven_cashier_shift', JSON.stringify(this.cashierShift));
+
+    // Asynchronously sync with central backend (server.py)
+    this.syncToBackend();
+  }
+
+  async syncToBackend() {
+    try {
+      const payload = {
+        products: this.products,
+        batches: this.batches,
+        movements: this.movements,
+        salesHistory: this.salesHistory,
+        auditLogs: this.auditLogs,
+        holdBills: this.holdBills,
+        cashierShift: this.cashierShift,
+        timestamp: new Date().toISOString()
+      };
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) {
+      // Offline or static file mode: continue using localStorage smoothly
+    }
+  }
+
+  async initSync() {
+    try {
+      const res = await fetch('/api/data');
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.products && data.products.length > 0) {
+          this.products = data.products;
+          if (data.batches) this.batches = data.batches;
+          if (data.movements) this.movements = data.movements;
+          if (data.salesHistory) this.salesHistory = data.salesHistory;
+          if (data.auditLogs) this.auditLogs = data.auditLogs;
+          if (data.holdBills) this.holdBills = data.holdBills;
+          if (data.cashierShift) this.cashierShift = data.cashierShift;
+          
+          localStorage.setItem('seven_products', JSON.stringify(this.products));
+          localStorage.setItem('seven_batches', JSON.stringify(this.batches));
+          localStorage.setItem('seven_movements', JSON.stringify(this.movements));
+          localStorage.setItem('seven_sales', JSON.stringify(this.salesHistory));
+          localStorage.setItem('seven_audit', JSON.stringify(this.auditLogs));
+          localStorage.setItem('seven_hold_bills', JSON.stringify(this.holdBills));
+          localStorage.setItem('seven_cashier_shift', JSON.stringify(this.cashierShift));
+
+          if (this.currentMode === 'FRONT') {
+            renderPOS();
+            updateHeldBillsUI();
+          } else {
+            renderDashboard();
+          }
+        } else {
+          // If server database is empty, seed it with initial state
+          this.syncToBackend();
+        }
+      }
+    } catch (e) {
+      // Offline fallback
+    }
   }
 
   resetAllData() {
@@ -387,9 +480,14 @@ class StockSystemState {
     localStorage.removeItem('seven_movements');
     localStorage.removeItem('seven_sales');
     localStorage.removeItem('seven_audit');
+    localStorage.removeItem('seven_hold_bills');
+    localStorage.removeItem('seven_cashier_shift');
     this.loadState();
     this.cart = [];
     this.save();
+    try {
+      fetch('/api/reset', { method: 'POST' });
+    } catch (e) {}
   }
 
   addAudit(action, details) {
@@ -436,31 +534,32 @@ function switchSystemMode(mode) {
   const btnBack = document.getElementById('mode-btn-back');
 
   if (mode === 'FRONT') {
-    frontView.classList.remove('hidden');
-    backView.classList.add('hidden');
-    btnFront.classList.add('mode-switch-active');
-    btnBack.classList.remove('mode-switch-active');
+    if (frontView) frontView.classList.remove('hidden');
+    if (backView) backView.classList.add('hidden');
+    if (btnFront) btnFront.classList.add('mode-switch-active');
+    if (btnBack) btnBack.classList.remove('mode-switch-active');
     renderPOS();
-    showToast('เข้าสู่ระบบหน้าร้าน: เครื่อง POS คิดเงิน', 'info', 1800);
+    showToast('เข้าสู่ระบบหน้าร้าน (Front POS คิดเงิน)', 'info', 1800);
   } else {
-    // Check permission: If user is Cashier, give a security hint
+    // Auto switch to Manager role so user is never blocked
     if (AppState.currentUser.roleKey === 'CASHIER') {
-      const pin = prompt('ระบบหลังร้าน (Back Office) ต้องใช้รหัสยืนยันผู้จัดการ (PIN ผู้จัดการเริ่มต้นคือ 1234):');
-      if (pin !== '1234') {
-        SoundFX.error();
-        showToast('รหัสผ่านไม่ถูกต้อง! ปฏิเสธการเข้าถึงระบบหลังร้าน', 'error');
-        return;
-      }
-      showToast('ยืนยันสิทธิ์ผู้จัดการสำเร็จ เข้าสู่ระบบหลังร้าน', 'success');
-      AppState.addAudit('MANAGER_OVERRIDE', 'พนักงานแคชเชียร์ใช้ PIN ผู้จัดการเข้าสู่ระบบหลังร้าน');
+      AppState.currentUser.roleKey = 'MANAGER';
+      AppState.currentUser.name = 'สมศักดิ์ สุขใจ';
+      AppState.currentUser.role = 'ผู้จัดการสาขา (Store Manager)';
+      const roleEl = document.getElementById('header-user-role');
+      if (roleEl) roleEl.innerText = AppState.currentUser.role;
+      const cashierEl = document.getElementById('pos-cashier-name');
+      if (cashierEl) cashierEl.innerText = AppState.currentUser.name;
     }
 
-    frontView.classList.add('hidden');
-    backView.classList.remove('hidden');
-    btnFront.classList.remove('mode-switch-active');
-    btnBack.classList.add('mode-switch-active');
-    switchBackTab('dashboard-tab');
+    if (frontView) frontView.classList.add('hidden');
+    if (backView) backView.classList.remove('hidden');
+    if (btnFront) btnFront.classList.remove('mode-switch-active');
+    if (btnBack) btnBack.classList.add('mode-switch-active');
+
+    switchBackTab('dashboard-tab', '📊 1. แดชบอร์ดสรุปผล (Dashboard)');
     showToast('เข้าสู่ระบบหลังร้าน (Back Office Management)', 'info', 1800);
+    lucide.createIcons();
   }
 }
 
@@ -480,40 +579,72 @@ function switchBackTab(tabId, customLabel) {
   document.querySelectorAll('.back-tab-content').forEach(el => el.classList.add('hidden'));
 
   const target = document.getElementById(tabId);
-  if (target) target.classList.remove('hidden');
+  if (target) {
+    target.classList.remove('hidden');
+  }
 
-  // Update Active Header Label
+  // Update Desktop Sub-Navbar Active State
+  document.querySelectorAll('.desktop-nav-tab').forEach(btn => {
+    if (btn.getAttribute('data-tab') === tabId) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  // Update Active Header Label (for Mobile)
   const labelEl = document.getElementById('current-back-tab-label');
   if (labelEl) {
     labelEl.innerText = customLabel || TAB_LABELS[tabId] || 'เมนูระบบหลังร้าน';
   }
 
-  if (tabId === 'dashboard-tab') renderDashboard();
-  if (tabId === 'inventory-tab') renderInventory();
-  if (tabId === 'receiving-tab') renderReceiving();
-  if (tabId === 'transfer-tab') renderTransfer();
-  if (tabId === 'counting-tab') renderCounting();
-  if (tabId === 'expiry-tab') renderExpiry();
-  if (tabId === 'movements-tab') renderMovements();
-  if (tabId === 'audit-tab') renderAudit();
+  try {
+    if (tabId === 'dashboard-tab') renderDashboard();
+    if (tabId === 'inventory-tab') renderInventory();
+    if (tabId === 'receiving-tab') renderReceiving();
+    if (tabId === 'transfer-tab') renderTransfer();
+    if (tabId === 'counting-tab') renderCounting();
+    if (tabId === 'expiry-tab') renderExpiry();
+    if (tabId === 'movements-tab') renderMovements();
+    if (tabId === 'audit-tab') renderAudit();
+  } catch (err) {
+    console.error('Error rendering tab:', tabId, err);
+  }
+
+  lucide.createIcons();
 }
 
-// Hamburger Menu Navigation Functions
-function openHamburgerMenu() {
-  const modal = document.getElementById('hamburger-menu-modal');
-  if (modal) modal.classList.remove('hidden');
+// Mobile / iPad Drawer Navigation Functions
+function openMobileDrawer() {
+  const wrapper = document.getElementById('mobile-drawer-wrapper');
+  if (wrapper) {
+    wrapper.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      document.body.classList.add('drawer-open');
+    });
+  }
 }
 
-function closeHamburgerMenu() {
-  const modal = document.getElementById('hamburger-menu-modal');
-  if (modal) modal.classList.add('hidden');
+function closeMobileDrawer() {
+  const wrapper = document.getElementById('mobile-drawer-wrapper');
+  if (wrapper) {
+    document.body.classList.remove('drawer-open');
+    setTimeout(() => {
+      wrapper.classList.add('hidden');
+    }, 280);
+  }
 }
 
-function selectHamburgerTab(tabId, label) {
+function selectDrawerTab(tabId, label) {
   switchBackTab(tabId, label);
-  closeHamburgerMenu();
-  showToast(`เปิดหน้า: ${label}`, 'info', 1800);
+  closeMobileDrawer();
+  showToast(`เปิดหน้า: ${label}`, 'info', 1600);
 }
+
+// Legacy aliases for backward compatibility
+function openHamburgerMenu() { openMobileDrawer(); }
+function closeHamburgerMenu() { closeMobileDrawer(); }
+function selectHamburgerTab(tabId, label) { selectDrawerTab(tabId, label); }
 
 // Toggle Current User Role (Store Manager vs Cashier)
 function toggleUserRole() {
@@ -538,48 +669,83 @@ function toggleUserRole() {
 // ==========================================
 // 5. POS POINT OF SALE MODULE (หน้าร้าน)
 // ==========================================
+window.currentPosCategory = 'ALL';
+
+function selectPosCategory(category, btnEl) {
+  window.currentPosCategory = category;
+  document.querySelectorAll('#pos-cat-pills .cat-pill').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  renderQuickProducts();
+}
+
 function renderPOS() {
   renderCart();
   renderQuickProducts();
+  updateHeldBillsUI();
 }
 
 function renderQuickProducts() {
   const container = document.getElementById('pos-quick-products');
   if (!container) return;
   
-  const query = (document.getElementById('pos-search-input')?.value || '').toLowerCase();
-  const filterCat = document.getElementById('pos-cat-filter')?.value || 'ALL';
+  const query = (document.getElementById('pos-search-input')?.value || '').toLowerCase().trim();
+  const filterCat = window.currentPosCategory || 'ALL';
 
   const filtered = AppState.products.filter(p => {
-    const matchQ = p.name.toLowerCase().includes(query) || p.barcode.includes(query) || p.sku.toLowerCase().includes(query);
+    const matchQ = !query || p.name.toLowerCase().includes(query) || p.barcode.includes(query) || p.sku.toLowerCase().includes(query);
     const matchC = filterCat === 'ALL' || p.category.includes(filterCat);
     return matchQ && matchC;
   });
 
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full py-12 text-center text-slate-400">
+        <i data-lucide="package-search" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
+        <p class="text-xs font-medium">ไม่พบสินค้าในหมวดหมู่นี้</p>
+      </div>
+    `;
+    lucide.createIcons();
+    return;
+  }
+
   container.innerHTML = filtered.map(p => {
     const isOutOfStock = p.shelf <= 0;
+    const isLowStock = !isOutOfStock && (p.shelf <= (p.reorderPoint || p.minStock || 10));
     const isTestExpired = p.testExpired;
 
+    let alertClass = '';
+    if (isOutOfStock) alertClass = 'stock-out';
+    else if (isLowStock) alertClass = 'stock-warning';
+
+    const defaultImg = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=350&auto=format&fit=crop&q=70";
+    const imgSrc = p.image || defaultImg;
+
     return `
-      <div onclick="posScanProduct('${p.barcode}')" class="neu-box-sm p-3 flex flex-col justify-between cursor-pointer hover:scale-[1.02] transition relative group ${isOutOfStock ? 'opacity-50' : ''}">
-        ${isTestExpired ? '<span class="absolute top-2 right-2 liquid-badge text-[10px] text-red-600 font-bold px-1.5 py-0.5 bg-red-100/70 border border-red-300">GS1 EXPIRED</span>' : ''}
+      <div onclick="posScanProduct('${p.barcode}')" class="neu-box-sm pos-prod-card p-2.5 flex flex-col justify-between cursor-pointer group ${alertClass}">
         <div>
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-xs text-gray-500 font-mono">${p.sku}</span>
-            <span class="liquid-pill text-[11px] font-semibold text-slate-700 bg-white/70">หน้าร้าน: ${p.shelf} ${p.unit}</span>
+          <!-- Clean Product Image -->
+          <div class="prod-img-wrapper mb-2">
+            <img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='${defaultImg}';">
+            ${isOutOfStock ? '<span class="absolute top-1.5 right-1.5 liquid-badge text-[10px] text-red-600 font-bold px-1.5 py-0.5 bg-red-100/90 border border-red-300 shadow-sm">หมดสต็อก</span>' : ''}
+            ${isLowStock ? '<span class="absolute top-1.5 right-1.5 liquid-badge text-[10px] text-rose-700 font-bold px-1.5 py-0.5 bg-rose-100/90 border border-rose-300 shadow-sm animate-pulse">เหลือน้อย</span>' : ''}
+            ${isTestExpired ? '<span class="absolute top-1.5 left-1.5 liquid-badge text-[10px] text-red-600 font-bold px-1.5 py-0.5 bg-red-100/90 border border-red-300 shadow-sm">EXPIRED</span>' : ''}
           </div>
-          <h4 class="font-semibold text-gray-800 text-sm line-clamp-2 leading-tight">${p.name}</h4>
-          <p class="text-[11px] text-gray-500 mt-1 font-mono">${p.barcode}</p>
+
+          <!-- Product Name only (Simple & Clean) -->
+          <h4 class="font-semibold text-slate-800 text-xs sm:text-sm line-clamp-2 leading-tight" title="${p.name}">${p.name}</h4>
         </div>
-        <div class="mt-3 flex items-center justify-between pt-2 border-t border-gray-200/50">
-          <span class="text-base font-bold text-slate-800">฿${p.price.toFixed(2)}</span>
-          <button class="neu-btn px-2.5 py-1 text-xs text-slate-700 font-semibold group-hover:bg-slate-700 group-hover:text-white transition">
-            + ยิงขาย
+
+        <!-- Price and Add Button -->
+        <div class="mt-2.5 flex items-center justify-between pt-2 border-t border-slate-200/60">
+          <span class="text-sm sm:text-base font-bold font-mono text-slate-900">฿${p.price.toFixed(2)}</span>
+          <button class="neu-btn px-2.5 py-1 text-xs text-slate-700 font-bold group-hover:bg-slate-800 group-hover:text-white transition">
+            + เพิ่ม
           </button>
         </div>
       </div>
     `;
   }).join('');
+  lucide.createIcons();
 }
 
 function posScanProduct(barcodeOrSku) {
@@ -732,7 +898,283 @@ function renderCart() {
   if (vatEl) vatEl.innerText = `฿${vatAmount.toFixed(2)}`;
   if (grandTotalEl) grandTotalEl.innerText = `฿${totalAmount.toFixed(2)}`;
 
+  updateHeldBillsUI();
   lucide.createIcons();
+}
+
+// ==========================================
+// 5.1 HOLD BILL SYSTEM (ระบบพักบิล)
+// ==========================================
+function holdCurrentBill() {
+  if (!AppState.cart || AppState.cart.length === 0) {
+    showToast('ไม่มีรายการสินค้าในตะกร้าที่จะพักบิล', 'warning');
+    return;
+  }
+
+  const grandTotal = AppState.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  const totalQty = AppState.cart.reduce((sum, item) => sum + item.qty, 0);
+  const heldBill = {
+    id: 'HOLD-' + Math.floor(1000 + Math.random() * 9000),
+    time: new Date().toLocaleTimeString('th-TH'),
+    date: new Date().toLocaleDateString('th-TH'),
+    cashier: AppState.currentUser.name,
+    items: JSON.parse(JSON.stringify(AppState.cart)),
+    total: grandTotal,
+    qty: totalQty
+  };
+
+  AppState.holdBills.unshift(heldBill);
+  AppState.cart = [];
+  AppState.save();
+  renderCart();
+  updateHeldBillsUI();
+  SoundFX.beep();
+  showToast(`พักบิลสำเร็จ (#${heldBill.id}) คิดเงินให้ลูกค้าคนถัดไปได้ทันที`, 'info', 3000);
+}
+
+function updateHeldBillsUI() {
+  const btn = document.getElementById('btn-held-bills');
+  const countEl = document.getElementById('held-bills-count');
+  const count = AppState.holdBills ? AppState.holdBills.length : 0;
+
+  if (countEl) countEl.innerText = count;
+  if (btn) {
+    if (count > 0) {
+      btn.classList.remove('hidden');
+    } else {
+      btn.classList.add('hidden');
+    }
+  }
+}
+
+function openHeldBillsModal() {
+  const modal = document.getElementById('held-bills-modal');
+  const container = document.getElementById('held-bills-list');
+  const totalCountEl = document.getElementById('held-bills-total-count');
+
+  if (!modal || !container) return;
+
+  const count = AppState.holdBills ? AppState.holdBills.length : 0;
+  if (totalCountEl) totalCountEl.innerText = `รวม ${count} บิลที่พักไว้`;
+
+  if (count === 0) {
+    container.innerHTML = `
+      <div class="py-8 text-center text-slate-400">
+        <i data-lucide="archive" class="w-8 h-8 mx-auto mb-1 opacity-50"></i>
+        <p class="text-xs">ไม่มีรายการบิลที่พักไว้</p>
+      </div>
+    `;
+    lucide.createIcons();
+    modal.classList.remove('hidden');
+    return;
+  }
+
+  container.innerHTML = AppState.holdBills.map((bill) => `
+    <div class="neu-box-sm p-3 flex items-center justify-between gap-3">
+      <div class="flex-1">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-xs text-amber-700 font-mono">#${bill.id}</span>
+          <span class="text-[11px] text-slate-400 font-mono">${bill.time}</span>
+        </div>
+        <p class="text-xs text-slate-700 mt-0.5 line-clamp-1">
+          ${bill.items.map(it => `${it.name} (x${it.qty})`).join(', ')}
+        </p>
+        <div class="flex items-center gap-3 mt-1 text-[11px] text-slate-500">
+          <span>รวม ${bill.qty} ชิ้น</span>
+          <span class="font-bold text-slate-800 text-xs">฿${bill.total.toFixed(2)}</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <button onclick="recallHeldBill('${bill.id}')" class="neu-btn neu-btn-primary px-3 py-1.5 text-xs font-semibold">
+          เรียกคืนบิล
+        </button>
+        <button onclick="deleteHeldBill('${bill.id}')" class="neu-btn p-1.5 text-slate-400 hover:text-red-500 text-xs" title="ยกเลิกบิลนี้">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  lucide.createIcons();
+  modal.classList.remove('hidden');
+}
+
+function closeHeldBillsModal() {
+  document.getElementById('held-bills-modal')?.classList.add('hidden');
+}
+
+function recallHeldBill(billId) {
+  const index = AppState.holdBills.findIndex(b => b.id === billId);
+  if (index === -1) return;
+
+  if (AppState.cart.length > 0) {
+    if (!confirm('มีสินค้าอยู่ในตะกร้าปัจจุบัน ต้องการพักบิลปัจจุบันก่อนเรียกคืนบิลนี้หรือไม่?')) {
+      return;
+    }
+    holdCurrentBill();
+  }
+
+  const bill = AppState.holdBills.splice(index, 1)[0];
+  AppState.cart = bill.items;
+  AppState.save();
+  renderCart();
+  updateHeldBillsUI();
+  closeHeldBillsModal();
+  SoundFX.beep();
+  showToast(`เรียกคืนบิล #${bill.id} สำเร็จ`, 'success');
+}
+
+function deleteHeldBill(billId) {
+  if (!confirm('ยืนยันลบบิลที่พักนี้หรือไม่?')) return;
+  AppState.holdBills = AppState.holdBills.filter(b => b.id !== billId);
+  AppState.save();
+  updateHeldBillsUI();
+  openHeldBillsModal();
+  showToast('ลบบิลที่พักแล้ว', 'info');
+}
+
+// ==========================================
+// 5.2 SHIFT REPORT & CASH RECONCILIATION (สรุปปิดกะ)
+// ==========================================
+function openShiftModal() {
+  const modal = document.getElementById('shift-report-modal');
+  if (!modal) return;
+
+  let shiftCash = 0;
+  let shiftQr = 0;
+  let shiftCard = 0;
+  let shiftBills = 0;
+
+  AppState.salesHistory.forEach(s => {
+    shiftBills += 1;
+    if (s.paymentMethod === 'CASH') shiftCash += s.total;
+    else if (s.paymentMethod === 'PROMPTPAY_QR') shiftQr += s.total;
+    else if (s.paymentMethod === 'CREDIT_CARD') shiftCard += s.total;
+  });
+
+  const grossTotal = shiftCash + shiftQr + shiftCard;
+
+  document.getElementById('shift-cashier-display').innerText = AppState.currentUser.name;
+  document.getElementById('shift-bills-display').innerText = `รวมยอดขาย ${shiftBills} บิล`;
+  document.getElementById('shift-cash-total').innerText = `฿${shiftCash.toFixed(2)}`;
+  document.getElementById('shift-qr-total').innerText = `฿${shiftQr.toFixed(2)}`;
+  document.getElementById('shift-card-total').innerText = `฿${shiftCard.toFixed(2)}`;
+  document.getElementById('shift-gross-total').innerText = `฿${grossTotal.toFixed(2)}`;
+
+  document.getElementById('shift-actual-cash').value = '';
+  const diffBadge = document.getElementById('shift-diff-badge');
+  diffBadge.className = 'liquid-pill px-3 py-2 text-xs font-bold bg-slate-100 text-slate-600 border-slate-300';
+  diffBadge.innerText = 'ยังไม่ได้ระบุ';
+
+  modal.classList.remove('hidden');
+  lucide.createIcons();
+}
+
+function closeShiftModal() {
+  document.getElementById('shift-report-modal')?.classList.add('hidden');
+}
+
+function calculateShiftDifference() {
+  let shiftCash = 0;
+  AppState.salesHistory.forEach(s => {
+    if (s.paymentMethod === 'CASH') shiftCash += s.total;
+  });
+
+  const actualVal = parseFloat(document.getElementById('shift-actual-cash').value);
+  const diffBadge = document.getElementById('shift-diff-badge');
+
+  if (isNaN(actualVal)) {
+    diffBadge.className = 'liquid-pill px-3 py-2 text-xs font-bold bg-slate-100 text-slate-600 border-slate-300';
+    diffBadge.innerText = 'ยังไม่ได้ระบุ';
+    return;
+  }
+
+  const diff = actualVal - shiftCash;
+  if (Math.abs(diff) < 0.01) {
+    diffBadge.className = 'liquid-pill px-3 py-2 text-xs font-bold bg-emerald-100 text-emerald-800 border-emerald-300';
+    diffBadge.innerText = 'ยอดเงินตรง พอดี ฿0.00';
+  } else if (diff > 0) {
+    diffBadge.className = 'liquid-pill px-3 py-2 text-xs font-bold bg-blue-100 text-blue-800 border-blue-300';
+    diffBadge.innerText = `เงินเกิน +฿${diff.toFixed(2)}`;
+  } else {
+    diffBadge.className = 'liquid-pill px-3 py-2 text-xs font-bold bg-red-100 text-red-800 border-red-300';
+    diffBadge.innerText = `เงินขาด -฿${Math.abs(diff).toFixed(2)}`;
+  }
+}
+
+function printShiftReport() {
+  let shiftCash = 0;
+  let shiftQr = 0;
+  let shiftCard = 0;
+  let shiftBills = 0;
+
+  AppState.salesHistory.forEach(s => {
+    shiftBills += 1;
+    if (s.paymentMethod === 'CASH') shiftCash += s.total;
+    else if (s.paymentMethod === 'PROMPTPAY_QR') shiftQr += s.total;
+    else if (s.paymentMethod === 'CREDIT_CARD') shiftCard += s.total;
+  });
+
+  const grossTotal = shiftCash + shiftQr + shiftCard;
+  const actualVal = parseFloat(document.getElementById('shift-actual-cash').value) || shiftCash;
+  const diff = actualVal - shiftCash;
+
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    showToast('กรุณาอนุญาตป๊อปอัปเพื่อพิมพ์รายงานปิดกะ', 'warning');
+    return;
+  }
+
+  printWindow.document.write(`
+    <html>
+    <head>
+      <title>Shift Closing Report - 7-Eleven</title>
+      <style>
+        body { font-family: 'Courier New', monospace; padding: 20px; font-size: 13px; max-width: 320px; margin: 0 auto; }
+        .center { text-align: center; }
+        .line { border-bottom: 1px dashed #333; margin: 8px 0; }
+        .row { display: flex; justify-content: space-between; margin: 3px 0; }
+        .bold { font-weight: bold; }
+      </style>
+    </head>
+    <body onload="window.print(); window.close();">
+      <div class="center">
+        <h2 style="margin:0;">7-ELEVEN</h2>
+        <div>สาขา 12489 | เครื่อง POS #01</div>
+        <div class="bold" style="margin-top:4px;">*** รายงานสรุปปิดกะ (Z-REPORT) ***</div>
+      </div>
+      <div class="line"></div>
+      <div class="row"><span>วันที่-เวลา:</span><span>${new Date().toLocaleString('th-TH')}</span></div>
+      <div class="row"><span>พนักงาน:</span><span>${AppState.currentUser.name}</span></div>
+      <div class="row"><span>จำนวนบิลขาย:</span><span>${shiftBills} บิล</span></div>
+      <div class="line"></div>
+      <div class="row"><span>ยอดเงินสด (Cash):</span><span>฿${shiftCash.toFixed(2)}</span></div>
+      <div class="row"><span>ยอด PromptPay QR:</span><span>฿${shiftQr.toFixed(2)}</span></div>
+      <div class="row"><span>ยอดบัตรเครดิต EDC:</span><span>฿${shiftCard.toFixed(2)}</span></div>
+      <div class="line"></div>
+      <div class="row bold" style="font-size:15px;"><span>ยอดขายรวม:</span><span>฿${grossTotal.toFixed(2)}</span></div>
+      <div class="line"></div>
+      <div class="row"><span>เงินสดนับจริง:</span><span>฿${actualVal.toFixed(2)}</span></div>
+      <div class="row bold"><span>ส่วนต่าง (Diff):</span><span>${diff >= 0 ? '+' : ''}฿${diff.toFixed(2)}</span></div>
+      <div class="line"></div>
+      <br><br>
+      <div class="center">
+        <div>ลงชื่อ ..........................................</div>
+        <div style="font-size:11px; margin-top:4px;">(${AppState.currentUser.name}) พนักงานแคชเชียร์</div>
+      </div>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
+function closeShiftAndReset() {
+  if (!confirm('ยืนยันปิดกะปัจจุบันและบันทึกข้อมูลหรือไม่?')) return;
+
+  AppState.addAudit('SHIFT_CLOSE', `ปิดกะประจำวันที่ ${new Date().toLocaleDateString('th-TH')} โดย ${AppState.currentUser.name}`);
+  showToast('ปิดกะและบันทึกข้อมูลเรียบร้อยแล้ว เริ่มต้นกะใหม่', 'success');
+  closeShiftModal();
 }
 
 // ==========================================
@@ -876,6 +1318,16 @@ function executeTransaction(method, tendered) {
   };
 
   AppState.salesHistory.unshift(saleRecord);
+
+  // Update current cashier shift
+  if (!AppState.cashierShift) {
+    AppState.cashierShift = { startTime: new Date().toLocaleTimeString('th-TH'), billsCount: 0, cashTotal: 0, qrTotal: 0, cardTotal: 0 };
+  }
+  AppState.cashierShift.billsCount = (AppState.cashierShift.billsCount || 0) + 1;
+  if (method === 'CASH') AppState.cashierShift.cashTotal = (AppState.cashierShift.cashTotal || 0) + totalAmount;
+  else if (method === 'PROMPTPAY_QR') AppState.cashierShift.qrTotal = (AppState.cashierShift.qrTotal || 0) + totalAmount;
+  else if (method === 'CREDIT_CARD') AppState.cashierShift.cardTotal = (AppState.cashierShift.cardTotal || 0) + totalAmount;
+
   AppState.addAudit('POS_SALE', `ออกใบเสร็จ ${receiptNo} ยอดรวม ฿${totalAmount.toFixed(2)} (${method}) โดย ${AppState.currentUser.name}`);
   AppState.save();
 
@@ -1343,6 +1795,21 @@ function renderDashboard() {
 }
 
 // Product Edit/Add Modal
+function setSampleProductImage() {
+  const category = document.getElementById('prod-form-category')?.value || '';
+  const samples = {
+    'เครื่องดื่ม': 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=350&auto=format&fit=crop&q=70',
+    'อาหารพร้อมรับประทาน': 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=350&auto=format&fit=crop&q=70',
+    'เบเกอรี่': 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=350&auto=format&fit=crop&q=70',
+    'ขนมขบเคี้ยว': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=350&auto=format&fit=crop&q=70',
+    'ของใช้ส่วนตัว': 'https://images.unsplash.com/photo-1559591937-e1032b4b4556?w=350&auto=format&fit=crop&q=70',
+    'อาหารแห้ง': 'https://images.unsplash.com/photo-1612927601601-6638404737ce?w=350&auto=format&fit=crop&q=70'
+  };
+  const url = samples[category] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=350&auto=format&fit=crop&q=70';
+  const imgInput = document.getElementById('prod-form-image');
+  if (imgInput) imgInput.value = url;
+}
+
 function openAddProductModal() {
   document.getElementById('product-modal-title').innerText = 'เพิ่มสินค้าใหม่';
   document.getElementById('prod-form-id').value = '';
@@ -1356,6 +1823,9 @@ function openAddProductModal() {
   document.getElementById('prod-form-shelf').value = '20';
   document.getElementById('prod-form-backroom').value = '50';
   document.getElementById('prod-form-reorder').value = '25';
+  
+  const imgInput = document.getElementById('prod-form-image');
+  if (imgInput) imgInput.value = 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=350&auto=format&fit=crop&q=70';
 
   document.getElementById('product-edit-modal').classList.remove('hidden');
 }
@@ -1376,6 +1846,9 @@ function openEditProductModal(id) {
   document.getElementById('prod-form-shelf').value = prod.shelf;
   document.getElementById('prod-form-backroom').value = prod.backroom;
   document.getElementById('prod-form-reorder').value = prod.reorderPoint;
+  
+  const imgInput = document.getElementById('prod-form-image');
+  if (imgInput) imgInput.value = prod.image || '';
 
   document.getElementById('product-edit-modal').classList.remove('hidden');
 }
@@ -1391,6 +1864,7 @@ function saveProductForm(e) {
   const barcode = document.getElementById('prod-form-barcode').value.trim();
   const name = document.getElementById('prod-form-name').value.trim();
   const category = document.getElementById('prod-form-category').value;
+  const image = (document.getElementById('prod-form-image')?.value || '').trim();
   const cost = parseFloat(document.getElementById('prod-form-cost').value) || 0;
   const price = parseFloat(document.getElementById('prod-form-price').value) || 0;
   const unit = document.getElementById('prod-form-unit').value.trim();
@@ -1403,6 +1877,8 @@ function saveProductForm(e) {
     return;
   }
 
+  const finalImg = image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=350&auto=format&fit=crop&q=70';
+
   if (id) {
     const prod = AppState.products.find(p => p.id === id);
     if (prod) {
@@ -1410,6 +1886,7 @@ function saveProductForm(e) {
       prod.barcode = barcode;
       prod.name = name;
       prod.category = category;
+      prod.image = finalImg;
       prod.cost = cost;
       prod.price = price;
       prod.unit = unit;
@@ -1425,6 +1902,7 @@ function saveProductForm(e) {
       barcode: barcode,
       name: name,
       category: category,
+      image: finalImg,
       cost: cost,
       price: price,
       unit: unit,
@@ -1496,6 +1974,9 @@ window.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
   switchSystemMode('FRONT');
 
+  // Load from Central Backend if available
+  AppState.initSync();
+
   const barcodeInput = document.getElementById('pos-barcode-input');
   if (barcodeInput) {
     barcodeInput.addEventListener('keydown', (e) => {
@@ -1505,10 +1986,18 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Update clock every second
   setInterval(() => {
     const clockEl = document.getElementById('header-clock');
     if (clockEl) {
       clockEl.innerText = new Date().toLocaleTimeString('th-TH');
     }
   }, 1000);
+
+  // Soft background sync every 10 seconds for real-time multi-device sync
+  setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      AppState.initSync();
+    }
+  }, 10000);
 });

@@ -79,6 +79,12 @@
           </div>
         </button>
 
+        <!-- Shift Summary & Close Shift -->
+        <button onclick="openShiftModal()" class="neu-btn px-3 py-2 flex items-center gap-1.5 text-xs text-slate-700 hover:text-emerald-700 transition rounded-xl font-semibold" title="สรุปยอดขายและปิดกะ">
+          <i data-lucide="receipt-text" class="w-4 h-4 text-emerald-600"></i>
+          <span class="hidden sm:inline">สรุปยอดปิดกะ</span>
+        </button>
+
         <div class="neu-inset-sm px-3 py-1.5 text-xs font-mono font-semibold text-slate-700 flex items-center gap-1.5">
           <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-500"></i>
           <span id="header-clock">--:--:--</span>
@@ -137,43 +143,38 @@
                 <span>ยิงสินค้า</span>
               </button>
             </div>
-
-            <!-- GS1 Expiry Guard Demonstration Tip -->
-            <div class="liquid-pill py-1.5 px-3 bg-amber-50/70 border-amber-200 text-amber-800 text-xs flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 shrink-0"></i>
-                <span>ทดสอบ Expiry Guard: ลองคลิก <strong>"ข้าวผัดไส้กรอก (ล็อตหมดอายุ)"</strong> เพื่อทดสอบระบบบล็อกการขายอัตโนมัติ</span>
-              </div>
-            </div>
           </div>
 
           <!-- CATALOG ON SHELVES (หน้าร้าน) -->
           <div class="neu-box p-5 flex flex-col gap-4 flex-1">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <i data-lucide="layout-grid" class="w-4 h-4 text-slate-500"></i>
-                <span>รายการสินค้าบนชั้นวางหน้าร้าน (Shelf Catalog)</span>
-              </h3>
+            <!-- Top Controls: Title, Search, Category Tabs -->
+            <div class="flex flex-col gap-3">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <i data-lucide="layout-grid" class="w-4 h-4 text-slate-500"></i>
+                  <span>รายการสินค้าบนชั้นวางหน้าร้าน (Shelf Catalog)</span>
+                </h3>
 
-              <div class="flex items-center gap-2">
-                <div class="neu-inset-sm px-2.5 py-1 flex items-center gap-1.5">
+                <div class="neu-inset-sm px-3 py-1.5 flex items-center gap-2 text-xs flex-1 sm:max-w-xs">
                   <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <input type="text" id="pos-search-input" oninput="renderQuickProducts()" placeholder="ค้นหาสินค้า..." class="bg-transparent border-none text-xs outline-none text-slate-700 w-28 md:w-36">
+                  <input type="text" id="pos-search-input" oninput="renderQuickProducts()" placeholder="ค้นหาชื่อสินค้า หรือบาร์โค้ด..." class="bg-transparent border-none text-xs outline-none text-slate-700 w-full">
                 </div>
+              </div>
 
-                <select id="pos-cat-filter" onchange="renderQuickProducts()" class="neu-inset-sm px-2.5 py-1 text-xs outline-none text-slate-700 bg-transparent">
-                  <option value="ALL">ทุกหมวดหมู่</option>
-                  <option value="เครื่องดื่ม">เครื่องดื่ม</option>
-                  <option value="อาหารพร้อมรับประทาน">อาหารพร้อมทาน</option>
-                  <option value="เบเกอรี่">เบเกอรี่</option>
-                  <option value="ขนมขบเคี้ยว">ขนมขบเคี้ยว</option>
-                  <option value="ของใช้ส่วนตัว">ของใช้</option>
-                </select>
+              <!-- Quick Category Tabs (Pills) -->
+              <div id="pos-cat-pills" class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                <button onclick="selectPosCategory('ALL', this)" class="cat-pill active">ทั้งหมด</button>
+                <button onclick="selectPosCategory('เครื่องดื่ม', this)" class="cat-pill">เครื่องดื่ม</button>
+                <button onclick="selectPosCategory('อาหารพร้อมรับประทาน', this)" class="cat-pill">อาหารพร้อมทาน</button>
+                <button onclick="selectPosCategory('เบเกอรี่', this)" class="cat-pill">เบเกอรี่</button>
+                <button onclick="selectPosCategory('ขนมขบเคี้ยว', this)" class="cat-pill">ขนมขบเคี้ยว</button>
+                <button onclick="selectPosCategory('ของใช้ส่วนตัว', this)" class="cat-pill">ของใช้</button>
+                <button onclick="selectPosCategory('อาหารแห้ง', this)" class="cat-pill">อาหารแห้ง</button>
               </div>
             </div>
 
             <!-- Product Cards Grid -->
-            <div id="pos-quick-products" class="grid grid-cols-2 sm:grid-cols-3 gap-3 overflow-y-auto max-h-[480px] pr-1">
+            <div id="pos-quick-products" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 overflow-y-auto max-h-[500px] pr-1">
               <!-- Rendered by JS -->
             </div>
           </div>
@@ -196,6 +197,19 @@
                 </div>
 
                 <div class="flex items-center gap-2">
+                  <!-- Held bills button -->
+                  <button id="btn-held-bills" onclick="openHeldBillsModal()" class="neu-btn px-2.5 py-1 text-xs text-amber-700 hover:text-amber-800 rounded-lg hidden flex items-center gap-1.5 font-bold" title="ดูรายการบิลที่พักไว้">
+                    <i data-lucide="archive" class="w-3.5 h-3.5"></i>
+                    <span>บิลพัก</span>
+                    <span id="held-bills-count" class="hold-count-badge">0</span>
+                  </button>
+
+                  <!-- Hold current bill button -->
+                  <button onclick="holdCurrentBill()" class="neu-btn px-2.5 py-1 text-xs text-slate-600 hover:text-slate-800 rounded-lg flex items-center gap-1 font-medium" title="พักบิลนี้ชั่วคราว เพื่อคิดเงินให้ลูกค้าคนถัดไป">
+                    <i data-lucide="pause-circle" class="w-3.5 h-3.5 text-amber-600"></i>
+                    <span class="hidden sm:inline">พักบิล</span>
+                  </button>
+
                   <span id="pos-cart-count" class="liquid-pill text-xs font-bold text-slate-700 bg-white/70">0 ชิ้น</span>
                   <button onclick="clearCart()" class="neu-btn p-1.5 text-slate-400 hover:text-red-500 rounded-lg text-xs" title="ล้างรายการ">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -243,27 +257,56 @@
     <!-- ================================================================= -->
     <main id="back-office-view" class="hidden flex flex-col gap-4">
       
-      <!-- Back Office Hamburger Control Bar (ไม่ต้องเลื่อนแถบยาว) -->
-      <div class="neu-box px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <button id="btn-hamburger-menu" onclick="openHamburgerMenu()" class="neu-btn neu-btn-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-md hover:scale-[1.02] transition">
+      <!-- BACK OFFICE SUB-NAVBAR (Visible & Smooth Horizontal Scroll on ALL Devices) -->
+      <nav class="neu-box p-2.5 flex items-center justify-between gap-2 overflow-x-auto">
+        <div class="flex items-center gap-1.5 flex-nowrap shrink-0">
+          <!-- Mobile Hamburger Drawer trigger button -->
+          <button onclick="openMobileDrawer()" class="neu-btn neu-btn-primary px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 lg:hidden shadow-sm" title="เปิดเมนูลิ้นชัก">
             <i data-lucide="menu" class="w-4 h-4 stroke-[2.5]"></i>
-            <span>เมนูระบบหลังร้าน (Menu)</span>
+            <span>เมนู</span>
           </button>
 
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-400 font-medium">กำลังแสดง:</span>
-            <span id="current-back-tab-label" class="liquid-pill px-3.5 py-1.5 text-xs font-bold text-slate-800 bg-white/80 border-slate-300">
-              📊 1. แดชบอร์ดสรุปผล (Dashboard)
-            </span>
-          </div>
+          <button onclick="switchBackTab('dashboard-tab', '📊 1. แดชบอร์ดสรุปผล (Dashboard)')" data-tab="dashboard-tab" class="desktop-nav-tab active">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-purple-600"></i>
+            <span>1. แดชบอร์ด</span>
+          </button>
+          <button onclick="switchBackTab('inventory-tab', '📦 2. สต็อกสินค้าคงคลัง (Inventory)')" data-tab="inventory-tab" class="desktop-nav-tab">
+            <i data-lucide="boxes" class="w-4 h-4 text-blue-600"></i>
+            <span>2. สต็อกสินค้า</span>
+          </button>
+          <button onclick="switchBackTab('receiving-tab', '🚚 3. รับสินค้าเข้า (Receiving)')" data-tab="receiving-tab" class="desktop-nav-tab">
+            <i data-lucide="truck" class="w-4 h-4 text-indigo-600"></i>
+            <span>3. รับสินค้าเข้า</span>
+          </button>
+          <button onclick="switchBackTab('transfer-tab', '🔄 4. เติมของขึ้นชั้นวาง (Transfer)')" data-tab="transfer-tab" class="desktop-nav-tab">
+            <i data-lucide="arrow-left-right" class="w-4 h-4 text-emerald-600"></i>
+            <span>4. เติมของขึ้นเชลฟ์</span>
+          </button>
+          <button onclick="switchBackTab('counting-tab', '📋 5. ตรวจนับสต็อก & อนุมัติ (Count)')" data-tab="counting-tab" class="desktop-nav-tab">
+            <i data-lucide="clipboard-check" class="w-4 h-4 text-teal-600"></i>
+            <span>5. ตรวจนับสต็อก</span>
+          </button>
+          <button onclick="switchBackTab('expiry-tab', '⏳ 6. วันหมดอายุ FEFO & GS1')" data-tab="expiry-tab" class="desktop-nav-tab">
+            <i data-lucide="calendar-off" class="w-4 h-4 text-amber-600"></i>
+            <span>6. วันหมดอายุ</span>
+          </button>
+          <button onclick="switchBackTab('movements-tab', '📜 7. ประวัติเคลื่อนไหว (Movements)')" data-tab="movements-tab" class="desktop-nav-tab">
+            <i data-lucide="history" class="w-4 h-4 text-slate-600"></i>
+            <span>7. ประวัติเคลื่อนไหว</span>
+          </button>
+          <button onclick="switchBackTab('audit-tab', '🛡️ 8. บันทึกความปลอดภัย (Audit)')" data-tab="audit-tab" class="desktop-nav-tab">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
+            <span>8. Audit Log</span>
+          </button>
         </div>
 
-        <div class="text-xs text-slate-500 font-medium hidden sm:flex items-center gap-1.5">
-          <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-slate-400"></i>
-          <span>คลิกปุ่ม <strong>เมนูระบบหลังร้าน</strong> เพื่อสลับหน้าได้อย่างรวดเร็ว</span>
+        <div class="hidden sm:flex items-center gap-2 shrink-0 pr-2">
+          <span class="text-xs text-slate-400 font-medium">แสดง:</span>
+          <span id="current-back-tab-label" class="liquid-pill px-3 py-1 text-xs font-bold text-slate-800 bg-white/80 border-slate-300">
+            📊 1. แดชบอร์ดสรุปผล
+          </span>
         </div>
-      </div>
+      </nav>
 
       <!-- BACK OFFICE TAB 1: DASHBOARD -->
       <section id="dashboard-tab" class="back-tab-content flex flex-col gap-4">
@@ -831,6 +874,14 @@
           <input type="text" id="prod-form-name" required class="neu-input w-full text-xs" placeholder="เช่น น้ำดื่ม ซีพี 600 ml">
         </div>
 
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">ลิงก์รูปภาพสินค้า (Image URL)</label>
+          <div class="flex items-center gap-2">
+            <input type="url" id="prod-form-image" class="neu-input w-full text-xs" placeholder="https://images.unsplash.com/...">
+            <button type="button" onclick="setSampleProductImage()" class="neu-btn px-3 py-2 text-[11px] shrink-0 font-medium" title="ใส่รูปภาพตัวอย่างตามหมวดหมู่">สุ่มรูป</button>
+          </div>
+        </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="font-semibold text-slate-700 block mb-1">หมวดหมู่</label>
@@ -883,123 +934,237 @@
     </div>
   </div>
 
-  <!-- MODAL: HAMBURGER NAVIGATION DRAWER (ไม่ต้องเลื่อนแถบยาว) -->
-  <div id="hamburger-menu-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden">
-    <div class="liquid-glass-modal w-full max-w-2xl p-6 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
-      
-      <!-- Modal Header -->
+  <!-- MOBILE DRAWER NAVIGATION (Slide-in from left for Mobile & iPad) -->
+  <div id="mobile-drawer-wrapper" class="hidden">
+    <!-- Backdrop -->
+    <div id="mobile-drawer-backdrop" onclick="closeMobileDrawer()" class="drawer-backdrop"></div>
+    
+    <!-- Drawer Panel -->
+    <div id="mobile-drawer-panel" class="drawer-panel p-5 flex flex-col justify-between">
+      <div class="flex flex-col gap-4">
+        <!-- Drawer Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-300/60">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-xl text-slate-800">
+              <i data-lucide="building-2" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-800">เมนูระบบหลังร้าน</h3>
+              <p class="text-[11px] text-slate-500">Back Office System</p>
+            </div>
+          </div>
+          <button onclick="closeMobileDrawer()" class="neu-btn w-8 h-8 rounded-full text-slate-600">✕</button>
+        </div>
+
+        <!-- 8 Modules List in Drawer -->
+        <div class="flex flex-col gap-2 overflow-y-auto max-h-[75vh] pr-1">
+          <button onclick="selectDrawerTab('dashboard-tab', '📊 1. แดชบอร์ดสรุปผล (Dashboard)')"
+                  class="neu-box-sm p-3 flex items-center gap-3 text-left hover:scale-[1.01] transition">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-lg text-purple-600 shrink-0">
+              <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">1. แดชบอร์ดสรุปผล</h4>
+              <p class="text-[10px] text-slate-500">ยอดขายประจำวัน, จำนวนบิล</p>
+            </div>
+          </button>
+
+          <button onclick="selectDrawerTab('inventory-tab', '📦 2. สต็อกสินค้าคงคลัง (Inventory)')"
+                  class="neu-box-sm p-3 flex items-center gap-3 text-left hover:scale-[1.01] transition">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-lg text-blue-600 shrink-0">
+              <i data-lucide="boxes" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">2. สต็อกสินค้าคงคลัง</h4>
+              <p class="text-[10px] text-slate-500">สต็อกแยกหน้าร้าน, คลังสำรอง</p>
+            </div>
+          </button>
+
+          <button onclick="selectDrawerTab('receiving-tab', '🚚 3. รับสินค้าเข้า (Receiving)')"
+                  class="neu-box-sm p-3 flex items-center gap-3 text-left hover:scale-[1.01] transition">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-lg text-indigo-600 shrink-0">
+              <i data-lucide="truck" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">3. รับสินค้าเข้าคลัง</h4>
+              <p class="text-[10px] text-slate-500">รับสินค้าจากการจัดส่ง DC ระบุล็อต</p>
+            </div>
+          </button>
+
+          <button onclick="selectDrawerTab('transfer-tab', '🔄 4. เติมของขึ้นชั้นวาง (Transfer)')"
+                  class="neu-box-sm p-3 flex items-center gap-3 text-left hover:scale-[1.01] transition">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-lg text-emerald-600 shrink-0">
+              <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">4. โอนย้ายเติมของ</h4>
+              <p class="text-[10px] text-slate-500">เติมของจากห้องเก็บของขึ้นเชลฟ์</p>
+            </div>
+          </button>
+
+          <button onclick="selectDrawerTab('counting-tab', '📋 5. ตรวจนับสต็อก & อนุมัติ (Count)')"
+                  class="neu-box-sm p-3 flex items-center gap-3 text-left hover:scale-[1.01] transition">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-lg text-teal-600 shrink-0">
+              <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">5. ตรวจนับสต็อกจริง</h4>
+              <p class="text-[10px] text-slate-500">ตรวจนับและขออนุมัติปรับยอด</p>
+            </div>
+          </button>
+
+          <button onclick="selectDrawerTab('expiry-tab', '⏳ 6. วันหมดอายุ FEFO & GS1')"
+                  class="neu-box-sm p-3 flex items-center gap-3 text-left hover:scale-[1.01] transition">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-lg text-amber-600 shrink-0">
+              <i data-lucide="calendar-off" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">6. วันหมดอายุ FEFO</h4>
+              <p class="text-[10px] text-slate-500">จัดการล็อตใกล้หมดอายุและตัดจำหน่าย</p>
+            </div>
+          </button>
+
+          <button onclick="selectDrawerTab('movements-tab', '📜 7. ประวัติเคลื่อนไหว (Movements)')"
+                  class="neu-box-sm p-3 flex items-center gap-3 text-left hover:scale-[1.01] transition">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-lg text-slate-600 shrink-0">
+              <i data-lucide="history" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">7. ประวัติเคลื่อนไหว</h4>
+              <p class="text-[10px] text-slate-500">ประวัติขาย, รับเข้า, โอนย้าย</p>
+            </div>
+          </button>
+
+          <button onclick="selectDrawerTab('audit-tab', '🛡️ 8. บันทึกความปลอดภัย (Audit)')"
+                  class="neu-box-sm p-3 flex items-center gap-3 text-left hover:scale-[1.01] transition">
+            <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-lg text-rose-600 shrink-0">
+              <i data-lucide="shield-alert" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">8. บันทึกความปลอดภัย</h4>
+              <p class="text-[10px] text-slate-500">ตรวจสอบความโปร่งใสและระบบล็อก</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-300/60 flex justify-between items-center text-xs text-slate-500">
+        <span>สาขา 12489 (Cloud Synced)</span>
+        <button onclick="closeMobileDrawer()" class="neu-btn px-3 py-1.5 text-xs font-semibold rounded-lg">ปิดเมนู</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: HELD BILLS (ระบบพักบิล) -->
+  <div id="held-bills-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden">
+    <div class="liquid-glass-modal w-full max-w-md p-6 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
       <div class="flex items-center justify-between pb-3 border-b border-white/60">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-xl text-slate-800">
-            <i data-lucide="menu" class="w-5 h-5"></i>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 neu-inset-sm flex items-center justify-center rounded-lg text-amber-600">
+            <i data-lucide="archive" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-slate-800">เมนูระบบหลังร้าน (Back Office System)</h3>
-            <p class="text-[11px] text-slate-500">เลือกเมนูที่ต้องการทำงานได้ทันที ไม่ต้องเลื่อนแถบยาว</p>
+            <h3 class="font-bold text-sm text-slate-800">รายการบิลที่พักไว้ (Held Bills)</h3>
+            <p class="text-[11px] text-slate-500">เลือกบิลเพื่อเรียกคืนกลับมาคิดเงินต่อ</p>
           </div>
         </div>
-        <button onclick="closeHamburgerMenu()" class="neu-btn w-8 h-8 rounded-full text-slate-600 hover:text-slate-900">✕</button>
+        <button onclick="closeHeldBillsModal()" class="neu-btn w-7 h-7 rounded-full text-xs">✕</button>
       </div>
 
-      <!-- 8 Modules Grid Selection -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-1">
-        
-        <button onclick="selectHamburgerTab('dashboard-tab', '📊 1. แดชบอร์ดสรุปผล (Dashboard)')" 
-                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-purple-300">
-          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-purple-600 shrink-0 group-hover:bg-purple-100 transition">
-            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-slate-800 group-hover:text-purple-700">1. แดชบอร์ดสรุปผล (Dashboard)</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">สรุปยอดขายประจำวัน, จำนวนบิล, สินค้าใกล้หมดสต็อก</p>
-          </div>
-        </button>
-
-        <button onclick="selectHamburgerTab('inventory-tab', '📦 2. สต็อกสินค้าคงคลัง (Inventory)')" 
-                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-blue-300">
-          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-blue-600 shrink-0 group-hover:bg-blue-100 transition">
-            <i data-lucide="boxes" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-slate-800 group-hover:text-blue-700">2. สต็อกสินค้าคงคลัง (Inventory)</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">ตรวจสอบสต็อกแยกหน้าร้าน, ห้องเก็บของ, ชำรุด, หมดอายุ</p>
-          </div>
-        </button>
-
-        <button onclick="selectHamburgerTab('receiving-tab', '🚚 3. รับสินค้าเข้าคลัง (Receiving)')" 
-                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-indigo-300">
-          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-indigo-600 shrink-0 group-hover:bg-indigo-100 transition">
-            <i data-lucide="truck" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-slate-800 group-hover:text-indigo-700">3. รับสินค้าเข้าคลัง (Receiving)</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">บันทึกรับสินค้าจากการจัดส่ง DC ระบุล็อตและวันหมดอายุ</p>
-          </div>
-        </button>
-
-        <button onclick="selectHamburgerTab('transfer-tab', '🔄 4. โอนย้ายเติมของ (Transfer)')" 
-                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-cyan-300">
-          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-cyan-600 shrink-0 group-hover:bg-cyan-100 transition">
-            <i data-lucide="arrow-left-right" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-slate-800 group-hover:text-cyan-700">4. โอนย้ายเติมของ (Transfer)</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">เติมสินค้าจากห้องเก็บของสำรองมาจัดเรียงบนชั้นวางหน้าร้าน</p>
-          </div>
-        </button>
-
-        <button onclick="selectHamburgerTab('counting-tab', '📋 5. ตรวจนับสต็อก & อนุมัติ (Count)')" 
-                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-teal-300">
-          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-teal-600 shrink-0 group-hover:bg-teal-100 transition">
-            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-slate-800 group-hover:text-teal-700">5. ตรวจนับสต็อก & อนุมัติ (Count)</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">นับสินค้าจริงเทียบยอดในระบบ พร้อมระบบอนุมัติผู้จัดการ</p>
-          </div>
-        </button>
-
-        <button onclick="selectHamburgerTab('expiry-tab', '⏳ 6. วันหมดอายุ FEFO & GS1')" 
-                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-amber-300">
-          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-amber-600 shrink-0 group-hover:bg-amber-100 transition">
-            <i data-lucide="calendar-off" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-slate-800 group-hover:text-amber-700">6. วันหมดอายุ FEFO & GS1</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">จัดการล็อตสินค้าใกล้หมดอายุและตัดจำหน่ายสินค้าหมดอายุ</p>
-          </div>
-        </button>
-
-        <button onclick="selectHamburgerTab('movements-tab', '📜 7. ประวัติเคลื่อนไหว (Movements)')" 
-                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-slate-400">
-          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-slate-600 shrink-0 group-hover:bg-slate-200 transition">
-            <i data-lucide="history" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-slate-800 group-hover:text-slate-900">7. ประวัติเคลื่อนไหว (Movements)</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">บันทึกความเคลื่อนไหวทุกรายการ: ขาย, รับ, ย้าย, ปรับยอด</p>
-          </div>
-        </button>
-
-        <button onclick="selectHamburgerTab('audit-tab', '🛡️ 8. บันทึกความปลอดภัย (Audit)')" 
-                class="neu-box-sm p-3.5 flex items-start gap-3 text-left hover:scale-[1.02] transition group cursor-pointer border border-transparent hover:border-rose-300">
-          <div class="w-10 h-10 neu-inset-sm flex items-center justify-center rounded-xl text-rose-600 shrink-0 group-hover:bg-rose-100 transition">
-            <i data-lucide="shield-alert" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-xs text-slate-800 group-hover:text-rose-700">8. บันทึกความปลอดภัย (Audit)</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">ตรวจสอบบันทึกความโปร่งใสและกิจกรรมป้องกันทุจริต</p>
-          </div>
-        </button>
-
+      <div id="held-bills-list" class="flex flex-col gap-2.5 max-h-[350px] overflow-y-auto pr-1">
+        <!-- Rendered by JS -->
       </div>
 
-      <div class="pt-2 border-t border-white/60 flex justify-end">
-        <button onclick="closeHamburgerMenu()" class="neu-btn px-4 py-2 text-xs font-semibold rounded-xl">
+      <div class="flex items-center justify-between pt-2 border-t border-white/60">
+        <span class="text-xs text-slate-500 font-medium" id="held-bills-total-count">รวม 0 บิล</span>
+        <button onclick="closeHeldBillsModal()" class="neu-btn px-4 py-2 text-xs font-semibold rounded-xl">
           ปิดหน้าต่าง
         </button>
       </div>
+    </div>
+  </div>
 
+  <!-- MODAL: SHIFT SUMMARY & CASH DRAWER REPORT (สรุปปิดกะ) -->
+  <div id="shift-report-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden">
+    <div class="liquid-glass-modal w-full max-w-lg p-6 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-white/60">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 neu-inset-sm flex items-center justify-center rounded-xl text-emerald-600">
+            <i data-lucide="receipt-text" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-800">สรุปยอดขายประจำกะ (Shift Report)</h3>
+            <p class="text-[11px] text-slate-500">ตรวจสอบเงินสดในลิ้นชักและปิดรอบการขาย</p>
+          </div>
+        </div>
+        <button onclick="closeShiftModal()" class="neu-btn w-8 h-8 rounded-full text-xs">✕</button>
+      </div>
+
+      <!-- Shift Info Cards -->
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="neu-inset-sm p-3">
+          <span class="text-slate-400 block text-[10px]">พนักงานประจำกะ:</span>
+          <span id="shift-cashier-display" class="font-bold text-slate-800 text-sm">สมศักดิ์ สุขใจ</span>
+          <span class="text-slate-500 text-[11px] block">เครื่อง Terminal #01</span>
+        </div>
+        <div class="neu-inset-sm p-3">
+          <span class="text-slate-400 block text-[10px]">เวลาประจำกะ:</span>
+          <span id="shift-time-display" class="font-bold font-mono text-slate-800 text-xs">เริ่ม: 08:00 - ปัจจุบัน</span>
+          <span id="shift-bills-display" class="text-slate-600 text-[11px] block font-semibold">จำนวน 0 บิล</span>
+        </div>
+      </div>
+
+      <!-- Breakdown of Sales by Payment Method -->
+      <div class="neu-inset p-3.5 flex flex-col gap-2 text-xs text-slate-700">
+        <div class="flex justify-between items-center">
+          <span class="flex items-center gap-1.5"><i data-lucide="banknote" class="w-3.5 h-3.5 text-emerald-600"></i> ยอดขายเงินสด (Cash):</span>
+          <span id="shift-cash-total" class="font-mono font-bold text-slate-800">฿0.00</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="flex items-center gap-1.5"><i data-lucide="qr-code" class="w-3.5 h-3.5 text-blue-600"></i> สแกน PromptPay QR:</span>
+          <span id="shift-qr-total" class="font-mono font-bold text-slate-800">฿0.00</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5 text-purple-600"></i> บัตรเครดิต (Credit Card):</span>
+          <span id="shift-card-total" class="font-mono font-bold text-slate-800">฿0.00</span>
+        </div>
+        <div class="flex justify-between items-center pt-2 border-t border-slate-300/50">
+          <span class="font-bold text-sm text-slate-900">ยอดขายรวมทั้งสิ้น (Gross Sales):</span>
+          <span id="shift-gross-total" class="font-mono font-bold text-lg text-emerald-700">฿0.00</span>
+        </div>
+      </div>
+
+      <!-- Cash Drawer Reconciliation -->
+      <div class="neu-box-sm p-3.5 flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+            <i data-lucide="calculator" class="w-4 h-4 text-slate-600"></i>
+            <span>นับเงินสดในลิ้นชักจริง (Actual Cash Count):</span>
+          </label>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="relative flex-1">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">฿</span>
+            <input type="number" step="0.25" id="shift-actual-cash" oninput="calculateShiftDifference()" class="neu-input w-full pl-8 pr-3 py-2 text-sm font-bold font-mono" placeholder="0.00">
+          </div>
+          <div id="shift-diff-badge" class="liquid-pill px-3 py-2 text-xs font-bold bg-slate-100 text-slate-600 border-slate-300">
+            ยังไม่ได้ระบุ
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-500">เงินสดในลิ้นชักควรตรงกับยอดขายเงินสด (ระบบจะคำนวณเงิน ขาด/เกิน อัตโนมัติ)</p>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-white/60">
+        <button onclick="closeShiftModal()" class="neu-btn px-4 py-2.5 text-xs font-semibold rounded-xl">ปิด</button>
+        <button onclick="printShiftReport()" class="neu-btn px-4 py-2.5 text-xs font-semibold rounded-xl flex items-center gap-1.5">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>พิมพ์รายงานปิดกะ</span>
+        </button>
+        <button onclick="closeShiftAndReset()" class="neu-btn neu-btn-primary px-5 py-2.5 text-xs font-bold rounded-xl flex items-center gap-1.5">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          <span>ปิดกะและเริ่มกะใหม่</span>
+        </button>
+      </div>
     </div>
   </div>
 
