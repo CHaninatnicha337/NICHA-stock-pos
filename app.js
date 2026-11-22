@@ -161,21 +161,21 @@ const DEFAULT_PRODUCTS = [
     id: "P005",
     sku: "F005",
     barcode: "8850123456057",
-    name: "ข้าวผัดไส้กรอก (ล็อตทดสอบหมดอายุ GS1)",
+    name: "ข้าวผัดไส้กรอก EZYGO",
     category: "อาหารพร้อมรับประทาน",
     image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=350&auto=format&fit=crop&q=70",
     cost: 26.0,
     price: 39.0,
     unit: "กล่อง",
-    shelf: 3,
-    backroom: 0,
+    shelf: 15,
+    backroom: 25,
     damaged: 0,
-    expired: 2,
+    expired: 0,
     minStock: 5,
     reorderPoint: 15,
     status: "ACTIVE",
     isFood: true,
-    testExpired: true
+    testExpired: false
   },
   {
     id: "P006",
@@ -314,12 +314,12 @@ const DEFAULT_BATCHES = [
     location: "Shelf & Backroom"
   },
   {
-    batchNo: "LOT-202611-EXPIRED",
+    batchNo: "LOT-202611-05",
     productId: "P005",
-    mfd: getRelativeDate(-10),
-    exp: getRelativeDate(-1),
-    qty: 5,
-    location: "Shelf & Expired Bin"
+    mfd: getRelativeDate(-5),
+    exp: getRelativeDate(14),
+    qty: 40,
+    location: "Shelf & Backroom"
   }
 ];
 
